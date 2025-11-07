@@ -52,3 +52,40 @@ Misalnya, sedang membuka halaman tertentu dan hanya ingin mengubah warna atau te
 Sedangkan Hot Restart akan memulai ulang seluruh aplikasi dari awal, seperti menekan tombol restart di komputer.
 Semua data, variabel, dan state akan hilang, dan aplikasi dibangun kembali dari nol.
 Hot restart digunakan ketika mengubah bagian kode yang mempengaruhi state awal aplikasi atau struktur utamanya, misalnya menambah widget baru di root.
+
+
+
+# Tugas 8
+# Jelaskan perbedaan antara Navigator.push() dan Navigator.pushReplacement() pada Flutter. Dalam kasus apa sebaiknya masing-masing digunakan pada aplikasi Football Shop kamu?
+Navigator.push()
+Menambahkan halaman (route) baru di atas tumpukan navigasi. Halaman sebelumnya tetap ada di tumpukan, di bawah halaman baru. User dapat menekan tombol back untuk kembali ke halaman sebelumnya.
+Sebaiknya digunakan saat user menavigasi ke halaman detail di mana ia diharapkan untuk kembali. Untuk penerapan yang sudah diimplementasikan adalah ketika user menekan add product yang di main page lalu ingin kembali ke halaman sebelumnya.
+
+Navigator.pushReplacement()
+engganti halaman (route) yang saat ini ada di tumpukan dengan halaman baru. Halaman sebelumnya dihapus dari tumpukan. User tidak bisa menekan tombol "kembali" untuk kembali ke halaman yang baru saja diganti.
+Digunakan saat user membuka drawer dan memilih "Home" atau "Add Product", pushReplacement() digunakan, ini digunakan untuk navigasi seperti drawer agar tumpukan navigasi tidak menumpuk.
+
+
+# Bagaimana kamu memanfaatkan hierarchy widget seperti Scaffold, AppBar, dan Drawer untuk membangun struktur halaman yang konsisten di seluruh aplikasi?
+Scaffold: Bertindak sebagai "kerangka" utama untuk setiap halaman (menu.dart dan productlist_form.dart), menyediakan slot-slot standar seperti appBar, body, dan drawer.
+
+AppBar: Ditempatkan di slot appBar milik Scaffold, memberikan area header yang konsisten di bagian atas setiap halaman untuk menampilkan judul ('TokoKu' di menu.dart dan 'Form Tambah Produk' di productlist_form.dart) dan secara otomatis menampilkan tombol untuk membuka Drawer.
+
+Drawer: Ditempatkan di slot drawer milik Scaffold, membuat widget terpisah (left_drawer.dart) dan menggunakannya kembali di setiap halaman (MyHomePage dan ProductFormPage).
+
+
+# Dalam konteks desain antarmuka, apa kelebihan menggunakan layout widget seperti Padding, SingleChildScrollView, dan ListView saat menampilkan elemen-elemen form? Berikan contoh penggunaannya dari aplikasi kamu.
+Padding
+Kelebihan, memberikan spasi di sekitar elemen UI. Tanpa Padding, semua TextFormField akan saling menempel dan menempel ke tepi layar, membuatnya terlihat berantakan dan sulit digunakan. Contoh di productlist_form.dart, Padding dengan const EdgeInsets.all(8.0) di sekeliling setiap TextFormField, DropdownButtonFormField, dan SwitchListTile.
+
+SingleChildScrollView
+Kelebihan, ini adalah widget untuk form. Saat user mengetik di TextFormField, keyboard virtual akan muncul dan menutupi sebagian layar. Tanpa SingleChildScrollView, field yang ada di bagian bawah mungkin akan tertutup oleh keyboard dan tidak dapat diakses. Contoh di productlist_form.dart seluruh Column dibungkus di dalam body Form dengan SingleChildScrollView.
+
+ListView
+Kelebihan, mirip dengan SingleChildScrollView, ListView juga menyediakan kemampuan scrolling. Namun, ListView lebih dioptimalkan untuk menampilkan daftar widget yang panjang dan seragam. Contoh di left_drawer.dart ListView digunakan sebagai child dari Drawer.
+
+
+# Bagaimana kamu menyesuaikan warna tema agar aplikasi Football Shop memiliki identitas visual yang konsisten dengan brand toko?
+Untuk menyesuaikan warna tema agar konsisten, dapat menggunakan ThemeData yang didefinisikan di MaterialApp (main.dart). 
+colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue).copyWith(secondary: Colors.blueAccent[]),
+primarySwatch: Colors.blue memberi tahu Flutter untuk menggunakan Colors.blue sebagai warna dasar.

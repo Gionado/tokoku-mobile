@@ -107,7 +107,6 @@ class ItemHomepage {
   ItemHomepage(this.name, this.icon, this.color);
 }
 
-
 class InfoCard extends StatelessWidget {
   // Kartu informasi yang menampilkan title dan content.
 
