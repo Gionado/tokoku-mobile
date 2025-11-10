@@ -14,6 +14,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
   String _title = "";
   String _content = "";
   String _category = "jersey"; // default
+  int _price = 0;
   String _thumbnail = "";
   bool _isFeatured = false; // default
 
@@ -64,6 +65,43 @@ class _ProductFormPageState extends State<ProductFormPage> {
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
                       return "Nama Produk tidak boleh kosong!";
+                    }
+                    return null;
+                  },
+                ),
+              ),
+
+              // === Harga ===
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    hintText: "Harga Produk",
+                    labelText: "Harga Produk",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                  onChanged: (String? value) {
+                    setState(() {
+                      // Konversi String ke int. 
+                      // Jika gagal (misal: string kosong), set ke 0
+                      _price = int.tryParse(value ?? '') ?? 0;
+                    });
+                  },
+
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return "Harga tidak boleh kosong!";
+                    }
+                    // Cek apakah input adalah angka
+                    if (int.tryParse(value) == null) {
+                      return "Harga harus berupa angka!";
+                    }
+                    // Cek apakah angka > 0
+                    if (int.parse(value) <= 0) {
+                      return "Harga harus lebih dari 0!";
                     }
                     return null;
                   },
@@ -140,9 +178,8 @@ class _ProductFormPageState extends State<ProductFormPage> {
                   },
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
-                      return "URL Thumbnail tidak boleh kosong!";
+                      return null;
                     }
-                    
                     // Cek format URL menggunakan Uri.tryParse()
                     final uri = Uri.tryParse(value);
                     if (uri == null || (!uri.isScheme('http') && !uri.isScheme('https')) || uri.host.isEmpty) {
@@ -192,6 +229,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                                   children: [
                                     // TODO: Munculkan value-value lainnya
                                     Text('Judul: $_title'),
+                                    Text('Harga: $_price'),
                                     Text('Content: $_content'),
                                     Text('Category: $_category'),
                                     Text('Thumbnail: $_thumbnail'),

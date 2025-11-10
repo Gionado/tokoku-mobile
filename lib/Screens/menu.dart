@@ -112,6 +112,7 @@ class InfoCard extends StatelessWidget {
 
   final String title;  // Judul kartu.
   final String content;  // Isi kartu.
+  
 
   const InfoCard({super.key, required this.title, required this.content});
 
