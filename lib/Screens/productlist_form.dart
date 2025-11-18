@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 // TODO: Impor drawer yang sudah dibuat sebelumnya
 import 'package:tokoku/widgets/left_drawer.dart';
+import 'dart:convert';
+import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:tokoku/screens/menu.dart';
 
 class ProductFormPage extends StatefulWidget {
   const ProductFormPage({super.key});
@@ -28,6 +32,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
         title: const Center(
@@ -35,7 +40,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
             'Form Tambah Produk',
           ),
         ),
-        backgroundColor: Colors.indigo,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
       ),
       // TODO: Tambahkan drawer yang sudah dibuat di sini
@@ -53,8 +58,9 @@ class _ProductFormPageState extends State<ProductFormPage> {
                   decoration: InputDecoration(
                     hintText: "Nama Produk",
                     labelText: "Nama Produk",
+                    prefixIcon: const Icon(Icons.shopping_bag),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
                   onChanged: (String? value) {
@@ -78,8 +84,9 @@ class _ProductFormPageState extends State<ProductFormPage> {
                   decoration: InputDecoration(
                     hintText: "Harga Produk",
                     labelText: "Harga Produk",
+                    prefixIcon: const Icon(Icons.attach_money),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
                   keyboardType: TextInputType.number,
@@ -116,8 +123,10 @@ class _ProductFormPageState extends State<ProductFormPage> {
                   decoration: InputDecoration(
                     hintText: "Detail Produk",
                     labelText: "Detail Produk",
+                    prefixIcon: const Icon(Icons.description),
+                    alignLabelWithHint: true, // Agar label dan icon tetap di atas saat maxLines > 1
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
                   onChanged: (String? value) {
@@ -140,8 +149,9 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 child: DropdownButtonFormField<String>(
                   decoration: InputDecoration(
                     labelText: "Kategori",
+                    prefixIcon: const Icon(Icons.category),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
                   value: _category,
@@ -167,8 +177,9 @@ class _ProductFormPageState extends State<ProductFormPage> {
                   decoration: InputDecoration(
                     hintText: "URL Thumbnail",
                     labelText: "URL Thumbnail",
+                    prefixIcon: const Icon(Icons.image_search),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
                   onChanged: (String? value) {
@@ -196,6 +207,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: SwitchListTile(
                   title: const Text("Tandai sebagai Produk Unggulan"),
+                  secondary: const Icon(Icons.star),
                   value: _isFeatured,
                   onChanged: (bool value) {
                     setState(() {
@@ -210,50 +222,64 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 alignment: Alignment.bottomCenter,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor:
-                      MaterialStateProperty.all(Colors.indigo),
-                    ),
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text('Produk berhasil tersimpan'),
-                              content: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                                  children: [
-                                    // TODO: Munculkan value-value lainnya
-                                    Text('Judul: $_title'),
-                                    Text('Harga: $_price'),
-                                    Text('Content: $_content'),
-                                    Text('Category: $_category'),
-                                    Text('Thumbnail: $_thumbnail'),
-                                    Text('Produk unggulan: ${_isFeatured ? "Ya" : "Tidak"}'),
-                                  ],
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  child: const Text('OK'),
-                                  onPressed: () {
-                                    _formKey.currentState!.reset();
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      }
-                    },
-                    child: const Text(
-                      "Save",
-                      style: TextStyle(color: Colors.white),
+                  child: SizedBox(
+                    width: double.infinity, // Tombol selebar layar
+                    child: ElevatedButton.icon(
+                      icon: const Icon(Icons.save, color: Colors.white),
+                      label: const Text(
+                        "Save Product",
+                        style: TextStyle(
+                          color: Colors.white, 
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          
+                          final response = await request.postJson(
+                            "http://localhost:8000/create-flutter/",
+                            jsonEncode({
+                              // UBAH DISINI:
+                              // Gunakan key 'name' bukan 'title'
+                              // Gunakan key 'description' bukan 'content'
+                              // Tambahkan 'price'
+                              "name": _title, 
+                              "description": _content,
+                              "price": _price, 
+                              "thumbnail": _thumbnail,
+                              "category": _category,
+                              "is_featured": _isFeatured,
+                            }),
+                          );
+                          
+                          if (context.mounted) {
+                            if (response['status'] == 'success') {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                content: Text("Product successfully saved!"),
+                              ));
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MyHomePage()),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                content: Text("Something went wrong, please try again."),
+                              ));
+                            }
+                          }
+                        }
+                      },
                     ),
                   ),
                 ),

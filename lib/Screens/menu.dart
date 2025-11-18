@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tokoku/widgets/left_drawer.dart';
-import 'package:tokoku/Widgets/product_card.dart';
+import 'package:tokoku/widgets/product_card.dart';
+import 'package:tokoku/screens/login.dart'; // Import Login
+import 'package:pbp_django_auth/pbp_django_auth.dart'; // Import CookieRequest
+import 'package:provider/provider.dart'; // Import Provider
 
 class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});
@@ -13,15 +16,16 @@ class MyHomePage extends StatelessWidget {
     ItemHomepage("All Products", Icons.shopping_cart, Colors.blue),
     ItemHomepage("My Products", Icons.all_inbox, Colors.green),
     ItemHomepage("Add Product", Icons.add_box_outlined, Colors.red),
+    ItemHomepage("Featured", Icons.workspace_premium, const Color(0xFF713F12)),
   ];
 
   @override
   Widget build(BuildContext context) {
-    // Scaffold menyediakan struktur dasar halaman dengan AppBar dan body.
+    // 1. Ambil request dari provider
+    final request = context.watch<CookieRequest>();
+
     return Scaffold(
-      // AppBar adalah bagian atas halaman yang menampilkan judul.
       appBar: AppBar(
-        // Judul aplikasi "Tokoku" dengan teks putih dan tebal.
         title: const Text(
           'TokoKu',
           style: TextStyle(
@@ -29,40 +33,65 @@ class MyHomePage extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        // Warna latar belakang AppBar diambil dari skema warna tema aplikasi.
-        backgroundColor: Theme
-            .of(context)
-            .colorScheme
-            .primary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        iconTheme: const IconThemeData(color: Colors.white),
+        
+        // Tombol Logout Kanan Atas) 
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0), // Memberi jarak dari pinggir kanan
+            child: TextButton.icon(
+              onPressed: () async {
+                final response = await request.logout(
+                    "http://localhost:8000/auth/logout/"); // Sesuaikan URL
+                String message = response["message"];
+                if (context.mounted) {
+                  if (response['status']) {
+                    String uname = response["username"];
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("$message Sampai jumpa, $uname."),
+                    ));
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginPage()),
+                      (route) => false,
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(message),
+                    ));
+                  }
+                }
+              },
+              // Ikon Logout
+              icon: const Icon(Icons.logout, color: Colors.white),
+              // Tulisan "Logout"
+              label: const Text(
+                "Logout",
+                style: TextStyle(color: Colors.white),
+              ),
+              // Efek sentuhan
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white, 
+              ),
+            ),
+          ),
+        ],
       ),
-      drawer: LeftDrawer(),
-      // Body halaman dengan padding di sekelilingnya.
+      drawer: const LeftDrawer(), // Pastikan pakai const jika memungkinkan
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        // Menyusun widget secara vertikal dalam sebuah kolom.
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Row untuk menampilkan 3 InfoCard secara horizontal.
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                InfoCard(title: 'NPM', content: npm),
-                InfoCard(title: 'Name', content: nama),
-                InfoCard(title: 'Class', content: kelas),
-              ],
+
             ),
-
-            // Memberikan jarak vertikal 16 unit.
             const SizedBox(height: 16.0),
-
-            // Menempatkan widget berikutnya di tengah halaman.
             Center(
               child: Column(
-                // Menyusun teks dan grid item secara vertikal.
-
                 children: [
-                  // Menampilkan teks sambutan dengan gaya tebal dan ukuran 18.
                   const Padding(
                     padding: EdgeInsets.only(top: 16.0),
                     child: Text(
@@ -73,18 +102,13 @@ class MyHomePage extends StatelessWidget {
                       ),
                     ),
                   ),
-
-                  // Grid untuk menampilkan ItemCard dalam bentuk grid 3 kolom.
                   GridView.count(
                     primary: true,
                     padding: const EdgeInsets.all(20),
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
                     crossAxisCount: 3,
-                    // Agar grid menyesuaikan tinggi kontennya.
                     shrinkWrap: true,
-
-                    // Menampilkan ItemCard untuk setiap item dalam list items.
                     children: items.map((ItemHomepage item) {
                       return ItemCard(item);
                     }).toList(),
@@ -96,9 +120,9 @@ class MyHomePage extends StatelessWidget {
         ),
       ),
     );
-
   }
 }
+
 class ItemHomepage {
   final String name;
   final IconData icon;
@@ -108,24 +132,18 @@ class ItemHomepage {
 }
 
 class InfoCard extends StatelessWidget {
-  // Kartu informasi yang menampilkan title dan content.
-
-  final String title;  // Judul kartu.
-  final String content;  // Isi kartu.
-  
+  final String title;
+  final String content;
 
   const InfoCard({super.key, required this.title, required this.content});
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      // Membuat kotak kartu dengan bayangan dibawahnya.
       elevation: 2.0,
       child: Container(
-        // Mengatur ukuran dan jarak di dalam kartu.
-        width: MediaQuery.of(context).size.width / 3.5, // menyesuaikan dengan lebar device yang digunakan.
+        width: MediaQuery.of(context).size.width / 3.5,
         padding: const EdgeInsets.all(16.0),
-        // Menyusun title dan content secara vertikal.
         child: Column(
           children: [
             Text(
