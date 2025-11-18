@@ -86,7 +86,7 @@ class LeftDrawer extends StatelessWidget {
               // Ganti URL di bawah ini dengan URL aplikasi kamu
               // Perhatikan path '/auth/logout/' sesuai dengan app authentication
               final response = await request.logout(
-                  "http://localhost:8000/auth/logout/"); 
+                  "http://gionado-gunawan-tokoku.pbp.cs.ui.ac.id/auth/logout/"); 
               
               String message = response["message"];
               if (context.mounted) {

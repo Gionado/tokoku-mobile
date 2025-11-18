@@ -43,7 +43,7 @@ class MyHomePage extends StatelessWidget {
             child: TextButton.icon(
               onPressed: () async {
                 final response = await request.logout(
-                    "http://localhost:8000/auth/logout/"); // Sesuaikan URL
+                    "http://gionado-gunawan-tokoku.pbp.cs.ui.ac.id/auth/logout/"); // Sesuaikan URL
                 String message = response["message"];
                 if (context.mounted) {
                   if (response['status']) {
@@ -78,7 +78,7 @@ class MyHomePage extends StatelessWidget {
           ),
         ],
       ),
-      drawer: const LeftDrawer(), // Pastikan pakai const jika memungkinkan
+      drawer: const LeftDrawer(), 
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

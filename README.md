@@ -195,7 +195,7 @@ Mengonfigurasi AndroidManifest.xml untuk izin internet.
 Membungkus widget utama MyApp dengan Provider yang menyediakan CookieRequest agar state login bisa diakses global.
 
 3. Membuat Model Kustom:
-Mengambil contoh data JSON dari endpoint Django (http://localhost:8000/json/).
+Mengambil contoh data JSON dari endpoint Django.
 Menggunakan Quicktype untuk men-generate model ProductEntry (file lib/models/product_entry.dart) agar sesuai dengan struktur data Django.
 
 4. Implementasi Fitur Auth (Register & Login):

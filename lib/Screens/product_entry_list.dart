@@ -25,10 +25,10 @@ class _ProductEntryListPageState extends State<ProductEntryListPage> {
     // Tentukan URL berdasarkan filter
     if (widget.filterUser) {
       // Jika tombol "My Products" yang ditekan
-      url = 'http://localhost:8000/my-products-json/';
+      url = 'http://gionado-gunawan-tokoku.pbp.cs.ui.ac.id/my-products-json/';
     } else {
       // Jika tombol "All Products" atau "Featured" yang ditekan
-      url = 'http://localhost:8000/json/';
+      url = 'http://gionado-gunawan-tokoku.pbp.cs.ui.ac.id/json/';
     }
 
     final response = await request.get(url);
@@ -112,7 +112,6 @@ class _ProductEntryListPageState extends State<ProductEntryListPage> {
                     );
                   }
                 },
-                // Daftar isi dropdown
                 itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
                   const PopupMenuItem<String>(
                     value: 'featured',

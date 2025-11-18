@@ -245,12 +245,8 @@ class _ProductFormPageState extends State<ProductFormPage> {
                         if (_formKey.currentState!.validate()) {
                           
                           final response = await request.postJson(
-                            "http://localhost:8000/create-flutter/",
+                            "http://gionado-gunawan-tokoku.pbp.cs.ui.ac.id/create-flutter/",
                             jsonEncode({
-                              // UBAH DISINI:
-                              // Gunakan key 'name' bukan 'title'
-                              // Gunakan key 'description' bukan 'content'
-                              // Tambahkan 'price'
                               "name": _title, 
                               "description": _content,
                               "price": _price, 
