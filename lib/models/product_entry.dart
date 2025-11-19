@@ -32,15 +32,16 @@ class ProductEntry {
     });
 
     factory ProductEntry.fromJson(Map<String, dynamic> json) => ProductEntry(
-        id: json["id"],
-        name: json["name"],
-        price: json["price"],
-        description: json["description"],
-        category: json["category"],
-        thumbnail: json["thumbnail"],
-        isFeatured: json["is_featured"],
-        userId: json["user_id"],
-        userUsername: json["user_username"],
+        // Perhatikan bagian '??' di bawah ini untuk menangani Null
+        id: json["id"].toString(), // Pastikan id jadi string
+        name: json["name"] ?? "",
+        price: json["price"] ?? 0, // Kalau harga null, anggap 0
+        description: json["description"] ?? "",
+        category: json["category"] ?? "",
+        thumbnail: json["thumbnail"] ?? "",
+        isFeatured: json["is_featured"] ?? false,
+        userId: json["user_id"] ?? 0, // SUMBER ERROR UTAMA: Kalau user_id null, anggap 0
+        userUsername: json["user_username"] ?? "Anonymous",
     );
 
     Map<String, dynamic> toJson() => {

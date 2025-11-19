@@ -43,7 +43,7 @@ class MyHomePage extends StatelessWidget {
             child: TextButton.icon(
               onPressed: () async {
                 final response = await request.logout(
-                    "http://gionado-gunawan-tokoku.pbp.cs.ui.ac.id/auth/logout/"); // Sesuaikan URL
+                    "https://gionado-gunawan-tokoku.pbp.cs.ui.ac.id/auth/logout/"); // Sesuaikan URL
                 String message = response["message"];
                 if (context.mounted) {
                   if (response['status']) {

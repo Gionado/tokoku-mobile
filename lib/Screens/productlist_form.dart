@@ -245,7 +245,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                         if (_formKey.currentState!.validate()) {
                           
                           final response = await request.postJson(
-                            "http://gionado-gunawan-tokoku.pbp.cs.ui.ac.id/create-flutter/",
+                            "https://gionado-gunawan-tokoku.pbp.cs.ui.ac.id/create-flutter/",
                             jsonEncode({
                               "name": _title, 
                               "description": _content,

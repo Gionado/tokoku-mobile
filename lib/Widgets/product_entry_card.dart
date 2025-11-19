@@ -37,7 +37,7 @@ class ProductEntryCard extends StatelessWidget {
                 ),
                 child: product.thumbnail.isNotEmpty
                     ? Image.network(
-                        'http://localhost:8000/proxy-image/?url=${Uri.encodeComponent(product.thumbnail)}',
+                        'https://gionado-gunawan-tokoku.pbp.cs.ui.ac.id/proxy-image/?url=${Uri.encodeComponent(product.thumbnail)}',
                         height: 250, 
                         width: double.infinity,
                         fit: BoxFit.cover,

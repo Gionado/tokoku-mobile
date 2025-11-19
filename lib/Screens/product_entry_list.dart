@@ -25,10 +25,10 @@ class _ProductEntryListPageState extends State<ProductEntryListPage> {
     // Tentukan URL berdasarkan filter
     if (widget.filterUser) {
       // Jika tombol "My Products" yang ditekan
-      url = 'http://gionado-gunawan-tokoku.pbp.cs.ui.ac.id/my-products-json/';
+      url = 'https://gionado-gunawan-tokoku.pbp.cs.ui.ac.id/my-products-json/';
     } else {
       // Jika tombol "All Products" atau "Featured" yang ditekan
-      url = 'http://gionado-gunawan-tokoku.pbp.cs.ui.ac.id/json/';
+      url = 'https://gionado-gunawan-tokoku.pbp.cs.ui.ac.id/json/';
     }
 
     final response = await request.get(url);
@@ -169,46 +169,37 @@ class _ProductEntryListPageState extends State<ProductEntryListPage> {
       body: FutureBuilder(
         future: fetchProduct(request),
         builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.data == null) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                "Error: ${snapshot.error}", // Ini akan menampilkan penyebab errornya
+                style: const TextStyle(color: Colors.red),
+              ),
+            );
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(
+              child: Text(
+                'Belum ada data produk.',
+                style: TextStyle(fontSize: 20, color: Color(0xFF59A5D8)),
+              ),
+            );
           } else {
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      widget.filterUser 
-                        ? 'You haven\'t added any products yet.'
-                        : 'There are no products in Tokoku yet.',
-                      style: TextStyle(
-                        fontSize: 20, 
-                        color: Theme.of(context).colorScheme.primary, 
-                      ),
-                      textAlign: TextAlign.center,
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (_, index) => ProductEntryCard(
+                product: snapshot.data![index],
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProductDetailPage(
+                      product: snapshot.data![index],
                     ),
-                    const SizedBox(height: 8),
-                  ],
+                  ),
                 ),
-              );
-            } else {
-              return ListView.builder(
-                itemCount: snapshot.data!.length,
-                itemBuilder: (_, index) => ProductEntryCard(
-                  product: snapshot.data![index],
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProductDetailPage(
-                          product: snapshot.data![index],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              );
-            }
+              ),
+            );
           }
         },
       ),

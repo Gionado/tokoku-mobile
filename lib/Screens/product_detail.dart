@@ -28,7 +28,7 @@ class ProductDetailPage extends StatelessWidget {
                 ),
                 child: Center(
                   child: Image.network(
-                    'http://localhost:8000/proxy-image/?url=${Uri.encodeComponent(product.thumbnail)}',
+                    'https://gionado-gunawan-tokoku.pbp.cs.ui.ac.id/proxy-image/?url=${Uri.encodeComponent(product.thumbnail)}',
                     fit: BoxFit.contain, // Gambar utuh di tengah
                     errorBuilder: (context, error, stackTrace) => Column(
                       mainAxisAlignment: MainAxisAlignment.center,
